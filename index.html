@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
@@ -12,6 +13,7 @@
       padding: 20px;
       color: #1e3a8a;
     }
+
     .container {
       max-width: 600px;
       margin: auto;
@@ -20,18 +22,22 @@
       border-radius: 20px;
       box-shadow: 0 5px 20px rgba(30, 58, 138, 0.1);
     }
+
     h2 {
       text-align: center;
       margin-bottom: 25px;
       color: #1e3a8a;
     }
+
     label {
       display: block;
       margin: 12px 0 6px;
       color: #1e3a8a;
       font-weight: 600;
     }
-    input, select {
+
+    input,
+    select {
       width: 100%;
       padding: 12px;
       border: 1px solid #cbd5e1;
@@ -39,19 +45,23 @@
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
+
     .time-group {
       display: flex;
       gap: 10px;
     }
+
     .time-group input {
       flex: 1;
     }
+
     .button-group {
       display: flex;
       flex-direction: row;
       gap: 10px;
       margin-top: 25px;
     }
+
     button {
       flex: 1;
       padding: 12px;
@@ -65,12 +75,15 @@
       cursor: pointer;
       transition: background-color 0.3s;
     }
+
     button.reset {
       background-color: #ef4444;
     }
+
     button:hover {
       opacity: 0.95;
     }
+
     .result {
       margin-top: 25px;
       background: #ecf4ff;
@@ -82,26 +95,45 @@
       font-weight: 600;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 768px) {
+      body {
+        padding: .5rem;
+      }
+
       .container {
         padding: 16px;
+
       }
+
+      label {
+        font-size: .875rem;
+        margin-top: 1.5rem;
+      }
+
       h2 {
         font-size: 16px;
       }
+
       button {
         font-size: 14px;
         padding: 10px;
       }
+
       .button-group {
         flex-direction: column;
       }
+
       .time-group {
         flex-direction: column;
+      }
+      .small-font{
+        font-size: .75rem;
+        margin-top: .5rem;
       }
     }
   </style>
 </head>
+
 <body>
   <div class="container">
     <h2>🧪 Resin Cost Calculator</h2>
@@ -154,7 +186,7 @@
       const overhead = baseCost * 0.14;
       const totalCost = baseCost + overhead;
 
-      let profitMargin = 1.5; 
+      let profitMargin = 1.5;
 
       if (baseCost < 500) {
         profitMargin = 2.0;
@@ -171,9 +203,15 @@
 
       document.getElementById('result').style.display = 'block';
       document.getElementById('result').innerHTML = `
-      🏷️ <strong>Selling Price:</strong> ₹${sellingPrice.toFixed(2)}
+      <div>
+        🏷️ <strong>Selling Price:</strong> ₹${sellingPrice.toFixed(2)}
+        </div>
+      <div class='small-font'>
         💼 <strong>Base Cost:</strong> ₹${baseCost.toFixed(2)}<br>
+        </div>
+      <div class='small-font'>
         📈 <strong>Your Profit :</strong> ₹${profit.toFixed(2)}<br>
+        </div>
       `;
     }
 
@@ -188,4 +226,5 @@
     }
   </script>
 </body>
+
 </html>
