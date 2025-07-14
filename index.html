@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>🧪 Resin Product Cost Calculator</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     body {
       font-family: 'Poppins', sans-serif;
@@ -31,7 +31,7 @@
       color: #1e3a8a;
       font-weight: 600;
     }
-    input {
+    input, select {
       width: 100%;
       padding: 12px;
       border: 1px solid #cbd5e1;
@@ -39,8 +39,12 @@
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
-    input[readonly] {
-      background-color: #f1f5f9;
+    .time-group {
+      display: flex;
+      gap: 10px;
+    }
+    .time-group input {
+      flex: 1;
     }
     .button-group {
       display: flex;
@@ -73,7 +77,7 @@
       padding: 18px;
       border-radius: 12px;
       text-align: left;
-      font-size: 17px;
+      font-size: 15px;
       color: #1d4ed8;
       font-weight: 600;
     }
@@ -92,6 +96,9 @@
       .button-group {
         flex-direction: column;
       }
+      .time-group {
+        flex-direction: column;
+      }
     }
   </style>
 </head>
@@ -99,14 +106,23 @@
   <div class="container">
     <h2>🧪 Resin Cost Calculator</h2>
 
+    <label for="resinType">🧬 Resin Type:</label>
+    <select id="resinType">
+      <option value="normal">Normal Resin</option>
+      <option value="uv">UV Resin</option>
+    </select>
+
     <label for="resinQty">🧴 Resin Used (ml):</label>
-    <input type="number" id="resinQty" placeholder="e.g. 200" required>
+    <input type="number" id="resinQty" placeholder="e.g. 200" required />
 
     <label for="materialCost">🎨 Other Material Cost (₹):</label>
-    <input type="number" id="materialCost" placeholder="e.g. 300" required>
+    <input type="number" id="materialCost" placeholder="e.g. 300" required />
 
-    <label for="timeSpent">⏱️ Time Spent (Hours):</label>
-    <input type="number" id="timeSpent" placeholder="e.g. 2" required>
+    <label>⏱️ Time Spent:</label>
+    <div class="time-group">
+      <input type="number" id="timeHours" placeholder="Hours" min="0" />
+      <input type="number" id="timeMinutes" placeholder="Minutes" min="0" max="59" />
+    </div>
 
     <div class="button-group">
       <button onclick="calculatePrice()">Calculate Selling Price 💰</button>
@@ -115,42 +131,61 @@
 
     <div id="result" class="result" style="display: none;"></div>
   </div>
-<script>
-  function calculatePrice() {
-    const resinQtyInput = document.getElementById('resinQty');
-    const materialCostInput = document.getElementById('materialCost');
-    const timeSpentInput = document.getElementById('timeSpent');
 
-    if (!resinQtyInput.value || !materialCostInput.value || !timeSpentInput.value) {
-      alert("⚠️ Please fill in all the input fields before calculating!");
-      return;
+  <script>
+    function calculatePrice() {
+      const resinType = document.getElementById('resinType').value;
+      const resinQty = parseFloat(document.getElementById('resinQty').value);
+      const materialCost = parseFloat(document.getElementById('materialCost').value);
+      const hours = parseFloat(document.getElementById('timeHours').value) || 0;
+      const minutes = parseFloat(document.getElementById('timeMinutes').value) || 0;
+
+      if (isNaN(resinQty) || isNaN(materialCost) || (hours === 0 && minutes === 0)) {
+        alert("⚠️ Please fill in all the input fields before calculating!");
+        return;
+      }
+
+      const resinRate = resinType === 'uv' ? 6 : 1.25;
+      const resinCost = resinQty * resinRate;
+      const totalTime = hours + (minutes / 60);
+      const laborCost = totalTime * 300;
+
+      const baseCost = resinCost + materialCost + laborCost;
+      const overhead = baseCost * 0.14;
+      const totalCost = baseCost + overhead;
+
+      let profitMargin = 1.5; 
+
+      if (baseCost < 500) {
+        profitMargin = 2.0;
+      } else if (baseCost < 1000) {
+        profitMargin = 1.0;
+      } else if (baseCost < 2000) {
+        profitMargin = 0.5;
+      } else {
+        profitMargin = 0.4;
+      }
+
+      const profit = totalCost * profitMargin + overhead;
+      const sellingPrice = totalCost + profit;
+
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').innerHTML = `
+      🏷️ <strong>Selling Price:</strong> ₹${sellingPrice.toFixed(2)}
+        💼 <strong>Base Cost:</strong> ₹${baseCost.toFixed(2)}<br>
+        📈 <strong>Your Profit :</strong> ₹${profit.toFixed(2)}<br>
+      `;
     }
 
-    const resinQty = parseFloat(resinQtyInput.value);
-    const resinCost = resinQty * 2; // ₹2 per ml
-
-    const materialCost = parseFloat(materialCostInput.value);
-    const timeSpent = parseFloat(timeSpentInput.value);
-    const hourlyRate = 300; // Fixed rate
-
-    const laborCost = timeSpent * hourlyRate;
-    const baseCost = resinCost + materialCost + laborCost;
-    const overhead = baseCost * 0.20;
-    const totalCost = baseCost + overhead;
-    const profit = totalCost * 0.60;
-    const sellingPrice = totalCost + profit;
-
-    document.getElementById('result').style.display = 'block';
-    document.getElementById('result').innerHTML = `
-      🏷️ <strong>Selling Price: ₹${sellingPrice.toFixed(2)}</strong><br>📈 Your Profit: ₹${profit.toFixed(2)}
-    `;
-  }
-
-  function resetForm() {
-    document.getElementById('resinQty').value = '';
-    document.getElementById('materialCost').value = '';
-    document.getElementById('timeSpent').value = '';
-    document.getElementById('result').style.display = 'none';
-    document.getElementById('result').innerHTML = '';
-  }
-</script>
+    function resetForm() {
+      document.getElementById('resinType').value = 'normal';
+      document.getElementById('resinQty').value = '';
+      document.getElementById('materialCost').value = '';
+      document.getElementById('timeHours').value = '';
+      document.getElementById('timeMinutes').value = '';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('result').innerHTML = '';
+    }
+  </script>
+</body>
+</html>
